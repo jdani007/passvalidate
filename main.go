@@ -4,20 +4,19 @@ import (
 	"errors"
 	"fmt"
 	"unicode"
+	"crypto/sha256"
 )
 
 const passLength = 8
+const password = "This%i5a"
 
-func validate(pw string) error {
+func validatePW(pw string) error {
+
 	pass := []rune(pw)
 
 	if len(pass) < passLength {
-		return errors.New("does not meet password length requirements")
+		return errors.New("does not meet the password length requirements")
 	} 
-	return complexChecker(pass)
-}
-
-func complexChecker(pw []rune) error {
 
 	var hasUpper, hasLower, hasNumber, hasSymbol bool
 
@@ -36,16 +35,24 @@ func complexChecker(pw []rune) error {
 	}
 
 	if !(hasUpper && hasLower && hasNumber && hasSymbol) {
-		return errors.New("password does not meet the required complexity")
+		return errors.New("password does not meet the complexity requirements")
 	}
-
 	return nil
+}
+
+func hashPW(pw string) string {
+
+	pass := sha256.Sum256([]byte(pw))
+
+	return fmt.Sprintf("%x", pass)
 }
 
 func main(){
 
-	if err := validate("This!i5a"); err != nil {
+	if err := validatePW(password); err != nil {
 		fmt.Println(err)
-	}
+	} else {
+		fmt.Println(hashPW(password))
+	} 
+	
 }
-
