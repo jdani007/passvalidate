@@ -3,6 +3,51 @@ Currently reading [The Go Workshop](https://courses.packtpub.com/courses/go)
 
 Here's my spin on [Exercise 3.01: Program to Measure Password Complexity](https://github.com/PacktWorkshops/The-Go-Workshop/blob/master/Chapter03/Exercise03.01/main.go)
 
-May be a little overkill but it was fun working on it.  Got it done pretty quickly so it seems I'm picking up these Golang concepts.
+Added SHA256 hash generation and command line options.
 
-Seems I can probably add a command line option to it...
+### Usage:
+Build the binary
+```Bash
+$ go build -o passvalidate
+```
+
+Run the program
+```Bash
+$ ./passvalidate --pass This%i5a
+4b3c0857acebe278e38ef315e7656cd74dffc25ee8e25d7a10214443d3b7725a
+```
+
+Default password length is 8.
+
+SHA2 options are 256 (Default), 384, and 512.
+
+```GO
+package main
+
+import (
+	"fmt"
+	"flag"
+
+	"github.com/james-daniels/passvalidate/check"
+)
+
+var passlen int
+var hashlen int
+var password string
+
+func init(){
+	flag.IntVar(&passlen, "len", 8, "Enter the password length (256, 384, 512).")
+	flag.IntVar(&hashlen, "hash", 256, "Enter the SHA2 Hash length.")
+	flag.StringVar(&password, "pass", "", "Enter complex password.")
+}
+
+func main(){
+	flag.Parse()
+
+	if err := check.Pass(password, passlen); err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(check.Hash(password, hashlen))
+	} 
+}
+```

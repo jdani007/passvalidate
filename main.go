@@ -1,58 +1,28 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"unicode"
-	"crypto/sha256"
+	"flag"
+
+	"github.com/james-daniels/passvalidate/check"
 )
 
-const passLength = 8
-const password = "This%i5a"
+var passlen int
+var hashlen int
+var password string
 
-func validatePW(pw string) error {
-
-	pass := []rune(pw)
-
-	if len(pass) < passLength {
-		return errors.New("does not meet the password length requirements")
-	} 
-
-	var hasUpper, hasLower, hasNumber, hasSymbol bool
-
-	for _, v := range pw {
-
-		switch {
-		case unicode.IsUpper(v):
-			hasUpper = true
-		case unicode.IsLower(v):
-			hasLower = true
-		case unicode.IsNumber(v):
-			hasNumber = true
-		case unicode.IsPunct(v) || unicode.IsSymbol(v):
-			hasSymbol = true
-		}
-	}
-
-	if !(hasUpper && hasLower && hasNumber && hasSymbol) {
-		return errors.New("password does not meet the complexity requirements")
-	}
-	return nil
-}
-
-func hashPW(pw string) string {
-
-	pass := sha256.Sum256([]byte(pw))
-
-	return fmt.Sprintf("%x", pass)
+func init(){
+	flag.IntVar(&passlen, "len", 8, "Enter the password length (256, 384, 512).")
+	flag.IntVar(&hashlen, "hash", 256, "Enter the SHA2 Hash length.")
+	flag.StringVar(&password, "pass", "", "Enter complex password.")
 }
 
 func main(){
+	flag.Parse()
 
-	if err := validatePW(password); err != nil {
+	if err := check.Pass(password, passlen); err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Println(hashPW(password))
+		fmt.Println(check.Hash(password, hashlen))
 	} 
-	
 }
