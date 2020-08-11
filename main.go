@@ -23,6 +23,6 @@ func main(){
 	if err := check.Pass(password, passlen); err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Println(check.Hash(password, hashlen))
+		fmt.Print(check.Hash(password, hashlen))
 	} 
 }
