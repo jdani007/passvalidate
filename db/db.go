@@ -39,19 +39,17 @@ func (user User)InsertCreds(m Mongo) (interface{}, error) {
 }
 
 //FindCreds retrieves the search criteria from the database
-func FindCreds(search string, value string, m Mongo) User {
+func (user User)FindCreds(search, value string, m Mongo) User {
 
 	collection := connectMongo(m)
 
-	var result User
-
 	findOne := collection.FindOne(context.TODO(),bson.M{search:value})
 
-	if err := findOne.Decode(&result); err != nil {
+	if err := findOne.Decode(&user); err != nil {
 		fmt.Println(err)
 	}
 	
-	return result
+	return user
 }
 
 func connectMongo(m Mongo) *mongo.Collection {
