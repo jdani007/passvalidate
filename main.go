@@ -13,7 +13,7 @@ var hashlen int
 var password string
 
 func init(){
-	flag.IntVar(&passlen, "len", 8, "Enter the password length.")
+	flag.IntVar(&passlen, "len", 8, "Enter the password length in characters.")
 	flag.IntVar(&hashlen, "hash", 256, "Enter the SHA2 Hash length (256, 384, 512).")
 	flag.StringVar(&password, "pass", "", "Enter complex password.")
 }
