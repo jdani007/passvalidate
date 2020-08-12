@@ -9,10 +9,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const database = "user"
-const collection = "users"
-const mongoURI = "mongodb://127.0.0.1:27017"
-
+//Mongo struct gathers connection details
+type Mongo struct {
+	Database string
+	Collection string
+	URI string
+}
 
 //User is a struct that contains the user credentials
 type User struct {
@@ -23,50 +25,46 @@ type User struct {
 	Email string
 }
 
-
 //InsertCreds function validates the credentials passed by the user.
-func (user User)InsertCreds() error {
+func (user User)InsertCreds(m Mongo) (*mongo.InsertOneResult, error) {
 
-	collection := connectMongo()
+	collection := connectMongo(m)
 
-	_, err := collection.InsertOne(context.TODO(), user)
+	result, err := collection.InsertOne(context.TODO(), user)
 	if err != nil {
-		return err
+		return result, err
 	}
 
-	return  nil
-}
-
-
-//FindCreds retrieves the username and password from the database
-func (user User)FindCreds() (User, error) {
-
-	collection := connectMongo()
-
-	var result User
-
-	err := collection.FindOne(context.TODO(), bson.M{"username": user.Username}).Decode(&result)
-	if err != nil {
-		return User{}, err
-	}
-	
 	return result, nil
 }
 
+//FindCreds retrieves the search criteria from the database
+func FindCreds(search string, value string, m Mongo) User {
 
-func connectMongo() *mongo.Collection {
+	collection := connectMongo(m)
 
-	clientOptions := options.Client().ApplyURI(mongoURI)
+	var result User
+
+	if err := collection.FindOne(context.TODO(),bson.M{search:value}).Decode(&result); err != nil {
+		fmt.Println(err)
+	}
+	
+	return result
+}
+
+
+func connectMongo(m Mongo) *mongo.Collection {
+
+	clientOptions := options.Client().ApplyURI(m.URI)
 
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	err = client.Ping(context.TODO(), nil)
-	if err != nil {
+	if err = client.Ping(context.TODO(), nil); err != nil {
 		fmt.Println(err)
 	}
 
-	return client.Database(database).Collection(collection)
+	return client.Database(m.Database).Collection(m.Collection)
 }
