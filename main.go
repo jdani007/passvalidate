@@ -41,7 +41,7 @@ func main(){
 			fmt.Println(err)
 		}
 
-		fmt.Println(db.FindCreds("username",user.Username, mongo).Email)
-		fmt.Println(db.FindCreds("username",user.Username, mongo).Password)
+		fmt.Println(db.FindCreds("username",user.Username,mongo).Email)
+		fmt.Println(db.FindCreds("username",user.Username,mongo).Password)
 	}
 }
