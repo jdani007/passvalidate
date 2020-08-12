@@ -26,16 +26,16 @@ type User struct {
 }
 
 //InsertCreds function validates the credentials passed by the user.
-func (user User)InsertCreds(m Mongo) (*mongo.InsertOneResult, error) {
+func (user User)InsertCreds(m Mongo) (interface{}, error) {
 
 	collection := connectMongo(m)
 
-	result, err := collection.InsertOne(context.TODO(), user)
+	insertOne, err := collection.InsertOne(context.TODO(), user)
 	if err != nil {
-		return result, err
+		return "", err
 	}
 
-	return result, nil
+	return insertOne.InsertedID, nil
 }
 
 //FindCreds retrieves the search criteria from the database
@@ -45,26 +45,27 @@ func FindCreds(search string, value string, m Mongo) User {
 
 	var result User
 
-	if err := collection.FindOne(context.TODO(),bson.M{search:value}).Decode(&result); err != nil {
+	findOne := collection.FindOne(context.TODO(),bson.M{search:value})
+
+	if err := findOne.Decode(&result); err != nil {
 		fmt.Println(err)
 	}
 	
 	return result
 }
 
-
 func connectMongo(m Mongo) *mongo.Collection {
 
-	clientOptions := options.Client().ApplyURI(m.URI)
+	applyURI := options.Client().ApplyURI(m.URI)
 
-	client, err := mongo.Connect(context.TODO(), clientOptions)
+	connect, err := mongo.Connect(context.TODO(), applyURI)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	if err = client.Ping(context.TODO(), nil); err != nil {
+	if err = connect.Ping(context.TODO(), nil); err != nil {
 		fmt.Println(err)
 	}
 
-	return client.Database(m.Database).Collection(m.Collection)
+	return connect.Database(m.Database).Collection(m.Collection)
 }
