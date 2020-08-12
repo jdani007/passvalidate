@@ -1,4 +1,4 @@
-package check
+package pw
 
 import (
 	"errors"
@@ -8,8 +8,8 @@ import (
 	"crypto/sha512"
 )
 
-//Pass performs the password length and complexity validation.
-func Pass(pw string, plen int) error {
+//Check performs the password length and complexity validation.
+func Check(pw string, plen int) error {
 
 	pass := []rune(pw)
 

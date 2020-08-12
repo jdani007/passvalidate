@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"flag"
 
-	"github.com/james-daniels/passvalidate/check"
+	"github.com/james-daniels/passvalidate/pw"
+	"github.com/james-daniels/passvalidate/db"
 )
 
 var passlen int
@@ -20,9 +21,30 @@ func init(){
 func main(){
 	flag.Parse()
 
-	if err := check.Pass(password, passlen); err != nil {
+	user := db.User{
+		Firstname: "John",
+		Lastname: "Doe",
+		Username: "jdoe",
+		Password: pw.Hash(password, hashlen),
+		Email: "john.doe@hotmail.com",
+	}
+
+	if err := pw.Check(password, passlen); err != nil {
 		fmt.Println(err)
-	} else {
-		fmt.Print(check.Hash(password, hashlen))
-	} 
+		return 
+	}
+
+	if err := user.InsertCreds(); err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	creds, err := user.FindCreds()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(creds.Email)
+	fmt.Println(creds.Password)
 }
