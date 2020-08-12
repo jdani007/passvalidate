@@ -46,6 +46,7 @@ func init(){
 
 func main(){
 	flag.Parse()
+
 	mongo := db.Mongo{
 		Database: "user",
 		Collection: "users",
@@ -54,21 +55,23 @@ func main(){
 
 	if err := pw.Check(password, passlen); err != nil {
 		fmt.Println(err)
-	} else {
-		user := db.User{
-			Firstname: "John",
-			Lastname: "Doe",
-			Username: "jdoe",
-			Password: pw.Hash(password, hashlen),
-			Email: "john.doe@hotmail.com",
-		}
-
-		if _, err := user.InsertCreds(mongo); err != nil {
-			fmt.Println(err)
-		}
-
-		fmt.Println(db.FindCreds("username",user.Username,mongo).Email)
-		fmt.Println(db.FindCreds("username",user.Username,mongo).Password)
+		return
 	}
+
+	user := db.User{
+		Firstname: "John",
+		Lastname: "Doe",
+		Username: "jdoe",
+		Password: pw.Hash(password, hashlen),
+		Email: "john.doe@hotmail.com",
+	}
+
+	if _, err := user.InsertCreds(mongo); err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(db.FindCreds("username",user.Username,mongo).Email)
+	fmt.Println(db.FindCreds("username",user.Username,mongo).Password)
 }
 ```
