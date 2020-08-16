@@ -26,30 +26,30 @@ type User struct {
 }
 
 //InsertCreds function validates the credentials passed by the user.
-func (user User)InsertCreds(m Mongo) (interface{}, error) {
+func (u User)InsertCreds(m Mongo) (interface{}, error) {
 
 	collection := connectMongo(m)
 
-	insertOne, err := collection.InsertOne(context.TODO(), user)
+	insertOne, err := collection.InsertOne(context.TODO(),u)
 	if err != nil {
 		return "", err
 	}
 
-	return insertOne.InsertedID, nil
+	return insertOne, nil
 }
 
 //FindCreds retrieves the search criteria from the database
-func (user User)FindCreds(search, value string, m Mongo) User {
+func (u User)FindCreds(search, value string, m Mongo) User {
 
 	collection := connectMongo(m)
 
 	findOne := collection.FindOne(context.TODO(),bson.M{search:value})
 
-	if err := findOne.Decode(&user); err != nil {
+	if err := findOne.Decode(&u); err != nil {
 		fmt.Println(err)
 	}
 	
-	return user
+	return u
 }
 
 func connectMongo(m Mongo) *mongo.Collection {
