@@ -1,11 +1,11 @@
 # passvalidate
-Currently reading [The Go Workshop](https://courses.packtpub.com/courses/go)
+Currently reading the online book [The Go Workshop](https://courses.packtpub.com/courses/go)
 
 Here's my spin on [Exercise 3.01: Program to Measure Password Complexity](https://github.com/PacktWorkshops/The-Go-Workshop/blob/master/Chapter03/Exercise03.01/main.go)
 
 Added SHA256 hash generation and command line options.
 
-Added MongoDB support with insert and find operations.
+Added MongoDB support with insert and find operations. 
 
 ### Usage:
 Build the binary
